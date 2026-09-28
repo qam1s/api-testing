@@ -36,7 +36,7 @@ class CommentModel(BaseModel):
     status: str
     type: str
     author_avatar_urls: AuthorAvatarUrlsModel
-    meta: List[Any]
+    meta: List[Any] | Dict[str, Any]
     _links: LinksModel
 
 

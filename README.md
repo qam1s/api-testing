@@ -51,10 +51,24 @@ cd api-testing
 uv sync
 ```
 
-### 3. Run Tests and Generate Report
+### 3. Start the Test Stand
 
 ```bash
-sh run_tests.sh
+docker compose up -d
+```
+
+On a fresh stand WordPress needs a one-time setup: install the site
+(`wp core install`), switch the environment to `local`
+(`wp config set WP_ENVIRONMENT_TYPE local`, otherwise the REST API
+ignores authentication and every write fails with `401`), and create an
+**Application Password** for the test user — the REST API rejects the
+plain account password. Put that password into `.env` as `PASSWORD`
+(see `.env.template`).
+
+### 4. Run Tests and Generate Report
+
+```bash
+uv run pytest -q
 ```
 
 ## 📄 License
