@@ -1,17 +1,19 @@
 from typing import Generator
 
 import pytest
-from pydentic import BaseModel
 
-from helpers.db import DBConnector
+from helpers.db import (
+    CommentRecord,
+    DBConnector,
+    PageRecord,
+    PostRecord,
+    UserRecord,
+)
+from helpers.service_data import ServiceDataModel
 from services.comments.comments import CommentsService
-from services.comments.models import CommentModel
 from services.pages.pages import PagesService
-from services.pages.models import PageModel
 from services.posts.posts import PostsService
-from services.posts.models import PostModel
 from services.users.users import UsersService
-from services.users.models import UserModel
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -31,21 +33,23 @@ def comments_service() -> CommentsService:
 
 @pytest.fixture()
 def create_comment(
-    comments_service: CommentsService, delete_post: PostModel
-) -> CommentModel:
+    comments_service: CommentsService, delete_post: ServiceDataModel
+) -> ServiceDataModel:
     return comments_service.create_comment(delete_post.model.id)
 
 
 @pytest.fixture()
 def delete_comment(
-    comments_service: CommentsService, create_comment: CommentModel
-) -> Generator[CommentModel, None, None]:
+    comments_service: CommentsService, create_comment: ServiceDataModel
+) -> Generator[ServiceDataModel, None, None]:
     yield create_comment
     comments_service.delete_comment(create_comment.model.id)
 
 
 @pytest.fixture()
-def create_comment_by_db(db: DBConnector) -> Generator[BaseModel, None, None]:
+def create_comment_by_db(
+    db: DBConnector,
+) -> Generator[CommentRecord, None, None]:
     comment = db.create_comment()
     yield comment
     db.delete_comment(comment.id)
@@ -60,20 +64,20 @@ def pages_service() -> PagesService:
 
 
 @pytest.fixture()
-def create_page(pages_service: PagesService) -> PageModel:
+def create_page(pages_service: PagesService) -> ServiceDataModel:
     return pages_service.create_page()
 
 
 @pytest.fixture()
 def delete_page(
-    pages_service: PagesService, create_page: PageModel
-) -> Generator[PageModel, None, None]:
+    pages_service: PagesService, create_page: ServiceDataModel
+) -> Generator[ServiceDataModel, None, None]:
     yield create_page
     pages_service.delete_page(create_page.model.id)
 
 
 @pytest.fixture()
-def create_page_by_db(db: DBConnector) -> Generator[BaseModel, None, None]:
+def create_page_by_db(db: DBConnector) -> Generator[PageRecord, None, None]:
     page = db.create_page()
     yield page
     db.delete_page(page.id)
@@ -88,20 +92,20 @@ def posts_service() -> PostsService:
 
 
 @pytest.fixture()
-def create_post(posts_service: PostsService) -> PostModel:
+def create_post(posts_service: PostsService) -> ServiceDataModel:
     return posts_service.create_post()
 
 
 @pytest.fixture()
 def delete_post(
-    posts_service: PostsService, create_post: PostModel
-) -> Generator[PostModel, None, None]:
+    posts_service: PostsService, create_post: ServiceDataModel
+) -> Generator[ServiceDataModel, None, None]:
     yield create_post
     posts_service.delete_post(create_post.model.id)
 
 
 @pytest.fixture()
-def create_post_by_db(db: DBConnector) -> Generator[BaseModel, None, None]:
+def create_post_by_db(db: DBConnector) -> Generator[PostRecord, None, None]:
     post = db.create_post()
     yield post
     db.delete_post(post.id)
@@ -116,20 +120,20 @@ def users_service() -> UsersService:
 
 
 @pytest.fixture()
-def create_user(users_service: UsersService) -> UserModel:
+def create_user(users_service: UsersService) -> ServiceDataModel:
     return users_service.create_user()
 
 
 @pytest.fixture()
 def delete_user(
-    users_service: UsersService, create_user: UserModel
-) -> Generator[UserModel, None, None]:
+    users_service: UsersService, create_user: ServiceDataModel
+) -> Generator[ServiceDataModel, None, None]:
     yield create_user
     users_service.delete_user(create_user.model.id)
 
 
 @pytest.fixture()
-def create_user_by_db(db: DBConnector) -> Generator[BaseModel, None, None]:
+def create_user_by_db(db: DBConnector) -> Generator[UserRecord, None, None]:
     user = db.create_user()
     yield user
     db.delete_user(user.id)

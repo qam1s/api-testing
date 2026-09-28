@@ -1,64 +1,61 @@
 import allure
-from pydantic import BaseModel
 
+from helpers.db import DBConnector, PageRecord
+from helpers.service_data import ServiceDataModel
 from services.pages.pages import PagesService
-from services.pages.models import PageModel
-from helpers.db import DBConnector
 
 
 @allure.epic("API")
-@allure.feature("Страницы")
+@allure.feature("Pages")
 @allure.severity(allure.severity_level.BLOCKER)
 class TestPages:
-    @allure.title("Создание страницы")
+    @allure.title("Create page")
     def test_create_page(
-        self, db: DBConnector, pages_service: PagesService
+        self, db: DBConnector, delete_page: ServiceDataModel
     ):
-        created_page = pages_service.create_page()
-        received_page = db.get_page_by_id(created_page.model.id)
+        received_page = db.get_page_by_id(delete_page.model.id)
         assert (
-            created_page.payloads.title == received_page[0][0]
-        ), f"Значения поля 'title' не совпадают, \
-            {created_page.payloads.title} != {received_page[0][0]}"
-        pages_service.delete_page(created_page.model.id)
+            delete_page.payloads.title == received_page[0][0]
+        ), f"Field 'title' values do not match, \
+            {delete_page.payloads.title} != {received_page[0][0]}"
 
-    @allure.title("Получение страницы")
+    @allure.title("Get page")
     def test_get_page(
         self,
-        create_page_by_db: BaseModel,
+        create_page_by_db: PageRecord,
         pages_service: PagesService
     ):
         received_page = pages_service.get_page(
-            create_page_by_db().id
+            create_page_by_db.id
         )
         assert (
             create_page_by_db.title == received_page.model.title.rendered
-        ), f"Значения поля 'title' не совпадают, \
+        ), f"Field 'title' values do not match, \
             {create_page_by_db.title} != {received_page.model.title.rendered}"
 
-    @allure.title("Изменение страницы")
+    @allure.title("Update page")
     def test_update_page(
         self,
         db: DBConnector,
         pages_service: PagesService,
-        delete_page: PageModel
+        delete_page: ServiceDataModel
     ):
         updated_page = pages_service.update_page(delete_page.model.id)
         received_page = db.get_page_by_id(delete_page.model.id)
         assert (
             updated_page.payloads.title == received_page[0][0]
-        ), f"Значения поля 'title' не совпадают, \
+        ), f"Field 'title' values do not match, \
             {updated_page.payloads.title} != {received_page[0][0]}"
 
-    @allure.title("Удаление страницы")
+    @allure.title("Delete page")
     def test_delete_page(
         self,
         db: DBConnector,
         pages_service: PagesService,
-        create_page: PageModel
+        create_page: ServiceDataModel
     ):
         deleted_page = pages_service.delete_page(create_page.model.id)
         received_page = db.get_page_by_id(create_page.model.id)
         assert (
             deleted_page.model.deleted is True and received_page == []
-        ), f"Страница не удалена, page = {received_page}"
+        ), f"Page was not deleted, page = {received_page}"
