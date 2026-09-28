@@ -1,3 +1,5 @@
+from typing import Any
+
 import allure
 
 from helpers.service_data import ServiceDataModel
@@ -7,22 +9,23 @@ from services.users.models import UserModel, DeletedUserModel
 
 
 class UsersService(ApiClient):
-    @allure.step("Создать пользователя")
+    @allure.step("Create user")
     def create_user(
         self,
         expected_code: int = 201,
         validate: bool = True,
-        **kwargs: dict
+        **kwargs: Any
     ) -> ServiceDataModel:
-        self.payloads = CreateUserPayloads(**kwargs)
+        payload = CreateUserPayloads(**kwargs)
         return self.post(
             endpoint="/users",
+            payload=payload,
             expected_code=expected_code,
             validate=validate,
             model=UserModel
         )
 
-    @allure.step("Получить пользователя")
+    @allure.step("Get user")
     def get_user(
         self, uid: int, expected_code: int = 200, validate: bool = True
     ) -> ServiceDataModel:
@@ -33,23 +36,24 @@ class UsersService(ApiClient):
             model=UserModel
         )
 
-    @allure.step("Изменить пользователя")
+    @allure.step("Update user")
     def update_user(
         self,
         uid: int,
         expected_code: int = 200,
         validate: bool = True,
-        **kwargs: dict
+        **kwargs: Any
     ) -> ServiceDataModel:
-        self.payloads = UpdateUserPayloads(**kwargs)
-        return self.post(
+        payload = UpdateUserPayloads(**kwargs)
+        return self.put(
             endpoint=f"/users/{uid}",
+            payload=payload,
             expected_code=expected_code,
             validate=validate,
             model=UserModel
         )
 
-    @allure.step("Удалить пользователя")
+    @allure.step("Delete user")
     def delete_user(
         self,
         uid: int,

@@ -1,3 +1,5 @@
+from typing import Any
+
 import allure
 
 from helpers.service_data import ServiceDataModel
@@ -9,23 +11,24 @@ from services.comments.payloads import (
 
 
 class CommentsService(ApiClient):
-    @allure.step("Создать комментарий")
+    @allure.step("Create comment")
     def create_comment(
         self,
         post: int,
         expected_code: int = 201,
         validate: bool = True,
-        **kwargs: dict
+        **kwargs: Any
     ) -> ServiceDataModel:
-        self.payloads = CreateCommentPayloads(post=post, **kwargs)
+        payload = CreateCommentPayloads(post=post, **kwargs)
         return self.post(
             endpoint="/comments",
+            payload=payload,
             expected_code=expected_code,
             validate=validate,
             model=CommentModel
         )
 
-    @allure.step("Получить комментарий")
+    @allure.step("Get comment")
     def get_comment(
         self, cid: int, expected_code: int = 200, validate: bool = True
     ) -> ServiceDataModel:
@@ -36,23 +39,24 @@ class CommentsService(ApiClient):
             model=CommentModel
         )
 
-    @allure.step("Изменить комментарий")
+    @allure.step("Update comment")
     def update_comment(
         self,
         cid: int,
         expected_code: int = 200,
         validate: bool = True,
-        **kwargs: dict
+        **kwargs: Any
     ) -> ServiceDataModel:
-        self.payloads = UpdateCommentPayloads(**kwargs)
-        return self.post(
+        payload = UpdateCommentPayloads(**kwargs)
+        return self.put(
             endpoint=f"/comments/{cid}",
+            payload=payload,
             expected_code=expected_code,
             validate=validate,
             model=CommentModel
         )
 
-    @allure.step("Удалить комментарий")
+    @allure.step("Delete comment")
     def delete_comment(
         self,
         cid: int,

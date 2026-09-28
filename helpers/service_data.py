@@ -1,10 +1,10 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import Any, Optional
 
 from pydantic import BaseModel
 
 
 @dataclass
 class ServiceDataModel:
-    model: BaseModel
-    payloads: Optional[BaseModel] = None
+    model: Optional[BaseModel] = None
+    payloads: Optional[Any] = None

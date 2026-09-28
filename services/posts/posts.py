@@ -1,3 +1,5 @@
+from typing import Any
+
 import allure
 
 from helpers.service_data import ServiceDataModel
@@ -7,22 +9,23 @@ from services.posts.models import PostModel, DeletedPostModel
 
 
 class PostsService(ApiClient):
-    @allure.step("Создать статью")
+    @allure.step("Create post")
     def create_post(
         self,
         expected_code: int = 201,
         validate: bool = True,
-        **kwargs: dict
+        **kwargs: Any
     ) -> ServiceDataModel:
-        self.payloads = PostPayloads(**kwargs)
+        payload = PostPayloads(**kwargs)
         return self.post(
             endpoint="/posts",
+            payload=payload,
             expected_code=expected_code,
             validate=validate,
             model=PostModel
         )
 
-    @allure.step("Получить статью")
+    @allure.step("Get post")
     def get_post(
         self, pid: int, expected_code: int = 200, validate: bool = True
     ) -> ServiceDataModel:
@@ -33,23 +36,24 @@ class PostsService(ApiClient):
             model=PostModel
         )
 
-    @allure.step("Изменить статью")
+    @allure.step("Update post")
     def update_post(
         self,
         pid: int,
         expected_code: int = 200,
         validate: bool = True,
-        **kwargs: dict
+        **kwargs: Any
     ) -> ServiceDataModel:
-        self.payloads = PostPayloads(**kwargs)
-        return self.post(
+        payload = PostPayloads(**kwargs)
+        return self.put(
             endpoint=f"/posts/{pid}",
+            payload=payload,
             expected_code=expected_code,
             validate=validate,
             model=PostModel
         )
 
-    @allure.step("Удалить статью")
+    @allure.step("Delete post")
     def delete_post(
         self,
         pid: int,

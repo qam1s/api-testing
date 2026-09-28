@@ -1,3 +1,5 @@
+from typing import Any
+
 import allure
 
 from helpers.service_data import ServiceDataModel
@@ -7,19 +9,20 @@ from services.pages.models import PageModel, DeletedPageModel
 
 
 class PagesService(ApiClient):
-    @allure.step("Создать страницу")
+    @allure.step("Create page")
     def create_page(
-        self, expected_code: int = 201, validate: bool = True, **kwargs: dict
+        self, expected_code: int = 201, validate: bool = True, **kwargs: Any
     ) -> ServiceDataModel:
-        self.payloads = PagePayloads(**kwargs)
+        payload = PagePayloads(**kwargs)
         return self.post(
             endpoint="/pages",
+            payload=payload,
             expected_code=expected_code,
             validate=validate,
             model=PageModel
         )
 
-    @allure.step("Получить страницу")
+    @allure.step("Get page")
     def get_page(
         self, pid: int, expected_code: int = 200, validate: bool = True
     ) -> ServiceDataModel:
@@ -30,23 +33,24 @@ class PagesService(ApiClient):
             model=PageModel
         )
 
-    @allure.step("Изменить страницу")
+    @allure.step("Update page")
     def update_page(
         self,
         pid: int,
         expected_code: int = 200,
         validate: bool = True,
-        **kwargs: dict
+        **kwargs: Any
     ) -> ServiceDataModel:
-        self.payloads = PagePayloads(**kwargs)
-        return self.post(
+        payload = PagePayloads(**kwargs)
+        return self.put(
             endpoint=f"/pages/{pid}",
+            payload=payload,
             expected_code=expected_code,
             validate=validate,
             model=PageModel
         )
 
-    @allure.step("Удалить страницу")
+    @allure.step("Delete page")
     def delete_page(
         self, pid: int, expected_code: int = 200, validate: bool = True,
     ) -> ServiceDataModel:

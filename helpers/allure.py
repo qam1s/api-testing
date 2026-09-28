@@ -8,6 +8,6 @@ class Allure:
     def attach_response_body(response: Response) -> None:
         allure.attach(
             response.content,
-            "Тело ответа",
+            "Response body",
             AttachmentType.JSON
         )
